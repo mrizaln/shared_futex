@@ -237,7 +237,7 @@ struct exponential_backoff_policy {
 	}
 
 private:
-	static constexpr std::size_t spins_on_last_iteration(backoff_aggressiveness aggressiveness) noexcept {
+	static constexpr std::size_t spins_on_last_iteration([[maybe_unused]] backoff_aggressiveness aggressiveness) noexcept {
 		return 5ull;		// +5 pause instructions on last iteration, on the scale of ~200 nanoseconds.
 	}
 	static constexpr std::size_t spin_iterations(backoff_aggressiveness aggressiveness) noexcept {
@@ -262,7 +262,7 @@ private:
 		const auto rdtsc = __rdtsc();
 		return static_cast<std::size_t>(rdtsc % max);
 	}
-	static constexpr std::size_t yield_iterations(backoff_aggressiveness aggressiveness) noexcept {
+	static constexpr std::size_t yield_iterations([[maybe_unused]] backoff_aggressiveness aggressiveness) noexcept {
 		return 0;
 	}
 	static constexpr bool disallow_parking(backoff_aggressiveness aggressiveness) noexcept {
