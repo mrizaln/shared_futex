@@ -18,18 +18,27 @@ static constexpr bool is_x86_64 = false;
 #endif
 }
 
+#if defined(__clang__)
+#ifndef __ATOMIC_HLE_ACQUIRE
+#define __ATOMIC_HLE_ACQUIRE 0
+#endif
+#ifndef __ATOMIC_HLE_RELEASE
+#define __ATOMIC_HLE_RELEASE 0
+#endif
+#endif
+
 enum class memory_order {
-	relaxed = std::memory_order_relaxed,
-	acquire = std::memory_order_acquire,
-	release = std::memory_order_release,
-	acq_rel = std::memory_order_acq_rel,
-	seq_cst = std::memory_order_seq_cst,
+	relaxed = static_cast<int>(std::memory_order_relaxed),
+	acquire = static_cast<int>(std::memory_order_acquire),
+	release = static_cast<int>(std::memory_order_release),
+	acq_rel = static_cast<int>(std::memory_order_acq_rel),
+	seq_cst = static_cast<int>(std::memory_order_seq_cst),
 
 	// Deprecated under c++17
-	consume [[deprecated]] = std::memory_order_consume,
+	consume [[deprecated]] = static_cast<int>(std::memory_order_consume),
 
-	xacquire = std::memory_order_acquire | 0x10000,
-	xrelease = std::memory_order_release | 0x10000
+	xacquire = acquire | 0x10000,
+	xrelease = release | 0x10000
 };
 
 /*
