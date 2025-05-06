@@ -1,8 +1,11 @@
 // shared_futex
 // � Shlomi Steinberg, 2015-2018
+//
+// modified by Muhammad Rizal Nurromdhoni, 2025
 
 #pragma once
 
+#include <algorithm>
 #include <condition_variable>
 #include <mutex>
 #include <atomic>
@@ -14,7 +17,6 @@
 #include <type_traits>
 #include <functional>
 #include <limits>
-#include <hash_combine.hpp>
 
 #include <cassert>
 
@@ -229,14 +231,29 @@ public:
 	*/
 	template <typename UID, typename K>
 	static parking_lot_slot& slot_for(const UID &id, const K &key) noexcept {
-		auto x = std::hash<std::decay_t<K>>{}(key);
-		x = hash_combine{}(x, id);
+        constexpr auto UID_size = sizeof(std::decay_t<UID>);
+        constexpr auto K_size = sizeof(std::decay_t<K>);
+
+        using UID_Arr = std::array<char, UID_size>;
+        using K_Arr = std::array<char, K_size>;
+
+        const auto uid_bytes = std::bit_cast<UID_Arr>(id);
+        const auto k_bytes = std::bit_cast<K_Arr>(key);
+
+        using Bytes = std::array<char, UID_size + K_size>;
+        auto bytes = Bytes{};
+
+        std::copy_n(uid_bytes.data(), UID_size, bytes.data());
+        std::copy_n(k_bytes.data(), K_size, bytes.data() + UID_size);
+
+        const auto x = std::hash<Bytes>{}(bytes);
 
 		return slots[x % slots_count];
 	}
 	static std::array<parking_lot_slot, slots_count> slots;
 };
 
+inline std::array<parking_lot_slot, parking_lot_slot::slots_count> parking_lot_slot::slots;
 }
 
 template <typename Key, typename NodeData = void>
