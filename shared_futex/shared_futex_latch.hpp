@@ -11,7 +11,6 @@
 #include <cassert>
 #include <tuple>
 #include <type_traits>
-#include <tuple_has_type.hpp>
 #include <utility>
 #if defined(__GNUC__) || defined(__clang__)
 #include <x86intrin.h>
@@ -19,17 +18,28 @@
 #include <intrin.h>
 #endif
 
-#include <glm/gtc/round.hpp>
-
 namespace strt::shared_futex_detail {
+
+    template <typename T, typename... U>
+    concept AnyOf = (std::same_as<T, U> or ...);
+
+    template <typename>
+    struct TupleTraits;
+
+    template <typename... Ts>
+    struct TupleTraits<std::tuple<Ts...>>
+    {
+        template <typename T>
+        static constexpr bool has_type = (std::same_as<T, Ts> or ...);
+    };
 
 struct features_helper {
 	template <typename SupportedFeaturesTuple, typename... RequestedFeatures>
-	static constexpr bool check_supports_all(const std::tuple<RequestedFeatures...> &requested_features) noexcept {
-		return std::conjunction_v<tuple_has_type<RequestedFeatures, SupportedFeaturesTuple>...>;
+	static constexpr bool check_supports_all(const std::tuple<RequestedFeatures...> &) noexcept {
+        return (TupleTraits<SupportedFeaturesTuple>::template has_type<RequestedFeatures> and ...);
 	}
 	template <typename Feature, typename... RequestedFeatures>
-	static constexpr bool requires_feature(const std::tuple<RequestedFeatures...> &requested_features) noexcept {
+	static constexpr bool requires_feature(const std::tuple<RequestedFeatures...> &) noexcept {
 		return (std::is_same_v<Feature, RequestedFeatures> || ...);
 	}
 };
@@ -445,7 +455,7 @@ private:
 		acquisition_primality primality, operation op, 
 		internal_acquisition_flags flags = internal_acquisition_flags::none, typename Validator
 	>
-	[[nodiscard]] latch_lock acquire_internal(const latch_lock &upgrading_lock, Validator &&validator, memory_order order) noexcept {
+	[[nodiscard]] latch_lock acquire_internal([[maybe_unused]] const latch_lock &upgrading_lock, Validator &&validator, memory_order order) noexcept {
 		// If transactional is enabled we attempt a lock-elision only if this is an initial acquisition attempt and skip_transactional flag is 
 		// unset.
 		if constexpr (tsx_rtm && primality == acquisition_primality::initial &&
@@ -770,7 +780,8 @@ public:
 	}
 	// Unregisters parked thread(s)
 	template <operation op>
-	void register_unpark(std::size_t count = 1, memory_order order = memory_order::release) noexcept {
+	void register_unpark(std::size_t count = 1,
+		[[maybe_unused]] memory_order order = memory_order::release) noexcept {
 		if constexpr (debug_shared_futex) {
 			assert(parking_allowed && "Parking not allowed");
 			assert(count && "Count must be positive");
@@ -815,7 +826,7 @@ public:
 	}
 	// Unregisters as parked and registers as waiter
 	template <operation op>
-	void register_unpark_and_wait(memory_order order = memory_order::release) noexcept {
+	void register_unpark_and_wait([[maybe_unused]] memory_order order = memory_order::release) noexcept {
 		if constexpr (debug_shared_futex)
 			assert(parking_allowed && "Parking not allowed");
 		
