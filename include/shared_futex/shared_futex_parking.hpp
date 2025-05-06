@@ -1,11 +1,13 @@
 // shared_futex
 // � Shlomi Steinberg, 2015-2018
+//
+// modified by Muhammad Rizal Nurromdhoni, 2025
 
 #pragma once
 
-#include "shared_futex_common.hpp"
-#include "../parking_lot/parking_lot.hpp"
-#include "../utils/shared_futex_spinner.hpp"
+#include "shared_futex/shared_futex_common.hpp"
+#include "shared_futex/parking_lot.hpp"
+#include "shared_futex/detail/shared_futex_spinner.hpp"
 
 #include <type_traits>
 

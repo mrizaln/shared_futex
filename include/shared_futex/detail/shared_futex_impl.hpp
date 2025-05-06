@@ -5,9 +5,9 @@
 
 #pragma once
 
-#include "shared_futex_common.hpp"
-#include "shared_futex_policies.hpp"
-#include "shared_futex_latch.hpp"
+#include "shared_futex/shared_futex_common.hpp"
+#include "shared_futex/shared_futex_policies.hpp"
+#include "shared_futex/shared_futex_latch.hpp"
 
 #include <chrono>
 #include <mutex>

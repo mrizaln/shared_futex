@@ -1,5 +1,7 @@
 // shared_futex
 // � Shlomi Steinberg, 2015-2018
+//
+// modified by Muhammad Rizal Nurromdhoni, 2025
 
 #pragma once
 

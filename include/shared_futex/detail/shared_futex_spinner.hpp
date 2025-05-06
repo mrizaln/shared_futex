@@ -1,9 +1,11 @@
 // shared_futex
 // � Shlomi Steinberg, 2015-2018
+//
+// modified by Muhammad Rizal Nurromdhoni, 2025
 
 #pragma once
 
-#include "../atomic/atomic_tsx.hpp"
+#include "shared_futex/atomic_tsx.hpp"
 
 #if defined(__GNUC__) || defined(__clang__)
 #include <x86intrin.h>

@@ -49,7 +49,7 @@ private:
 	// Node tag
 	struct {
 		void *id;
-		std::aligned_storage_t<key_size> key;
+		alignas(key_size) std::byte key[key_size];
 	} tag{};
 
 protected:

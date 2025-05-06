@@ -1,10 +1,12 @@
 // shared_futex
 // � Shlomi Steinberg, 2015-2018
+//
+// modified by Muhammad Rizal Nurromdhoni, 2025
 
 #pragma once
 
-#include "shared_futex_impl.hpp"
-#include "shared_futex_policies.hpp"
+#include "shared_futex/detail/shared_futex_impl.hpp"
+#include "shared_futex/shared_futex_policies.hpp"
 
 namespace strt {
 

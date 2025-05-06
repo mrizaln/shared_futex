@@ -1,10 +1,12 @@
 // shared_futex
 // � Shlomi Steinberg, 2015-2018
+//
+// modified by Muhammad Rizal Nurromdhoni, 2025
 
 #pragma once
 
-#include "shared_futex_common.hpp"
-#include "../atomic/atomic_tsx.hpp"
+#include "shared_futex/shared_futex_common.hpp"
+#include "shared_futex/atomic_tsx.hpp"
 
 #include <array>
 #include <type_traits>
